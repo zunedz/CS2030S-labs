@@ -7,13 +7,13 @@ class RubikFront extends Rubik {
     static final int RIGHT_FACE_INDEX = 3;
     static final int BOTTOM_FACE_INDEX = 4;
     static final int BACK_FACE_INDEX = 5;
-    private final Face[] faces = new Face[6];
+    private final Face[] faces = new Face[RubikFront.NUM_FACES];
 
 
     RubikFront(int[][][] grids) {
-        Face[] tempFaces = new Face[6];
+        Face[] tempFaces = new Face[RubikFront.NUM_FACES];
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < RubikFront.NUM_FACES; i++) {
             int[][] grid = grids[i];
             Face tempFace = new Face(grid);
             faces[i] = tempFace;
