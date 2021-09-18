@@ -17,7 +17,7 @@ class Request {
             fare = fare + surcharge;
         }
         if (isDividedEqually) {
-            fare = (int) fare/numberOfPassengers;
+            fare = (int) fare / numberOfPassengers;
         }
         return fare;
     }
