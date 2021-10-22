@@ -1,23 +1,21 @@
 import java.util.HashMap;
 
 class Assessment implements Keyable {
-    private final HashMap<String, String> map;
+    private final String key;
+    private final String grade;
 
     Assessment(String key, String grade) {
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put(key, grade);
-        this.map = map;
+        this.key = key;
+        this.grade = grade;
     }
 
     @Override
     public String getKey() {
-        Object[] keySet = map.keySet().toArray();
-        return (String) keySet[0];
+        return this.key;
     }
 
     public String getGrade() {
-        String key = this.getKey();
-        return map.get(key);
+        return this.grade;
     }
 
     @Override

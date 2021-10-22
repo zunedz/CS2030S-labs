@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 class KeyableMap<V extends Keyable> implements Keyable {
     private final String key;
@@ -15,6 +16,11 @@ class KeyableMap<V extends Keyable> implements Keyable {
         this.map = map;
     } 
 
+    KeyableMap(KeyableMap<V> keyMap) {
+        this.key = keyMap.key;
+        this.map = keyMap.map;
+    }
+
     KeyableMap<V> put(V newAs) {
         Map<String, V> newMap = map;
         newMap.put(newAs.getKey(), newAs);
@@ -28,11 +34,8 @@ class KeyableMap<V extends Keyable> implements Keyable {
     Optional<V> get(String key) {
         if (this.map.containsKey(key)) {
             return Optional.<V>of(this.map.get(key));
-        } return Optional.empty;
-    }
-
-    Map<String, V> getMap() {
-        return this.map;
+        } 
+        return Optional.empty();
     }
 
     @Override
@@ -46,11 +49,11 @@ class KeyableMap<V extends Keyable> implements Keyable {
         for (int i = 0; i < map.keySet().toArray().length; i++) {
             if (i == 0) {
                 String key = (String) map.keySet().toArray()[i];
-                output += this.get(key);
+                output += this.map.get(key);
             } else {
                 String key = (String) map.keySet().toArray()[i];
                 output += ", "
-                    + this.get(key);
+                    + this.map.get(key);
             }
         }
         return output + "}";

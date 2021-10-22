@@ -10,8 +10,12 @@ class Module extends KeyableMap<Assessment> {
         super(key, assessment);
     }
 
+    Module(KeyableMap<Assessment> keyMap) {
+        super(keyMap);
+    }
+
     Module put(Assessment as) {
         KeyableMap<Assessment> keyMap = super.put(as);
-        return new Module(keyMap.getKey(), keyMap.getMap());
+        return new Module(keyMap);
     }
 }

@@ -10,9 +10,13 @@ class Student extends KeyableMap<Module> {
         super(key, map);
     }
 
+    Student(KeyableMap<Module> keyMap) {
+        super(keyMap);
+    }
+    
     @Override
     Student put(Module mod) {
         KeyableMap<Module> keyMap = super.put(mod);
-        return new Student(keyMap.getKey(), keyMap.getMap());
+        return new Student(keyMap);
     }
 }

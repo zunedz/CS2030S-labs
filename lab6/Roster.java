@@ -9,28 +9,29 @@ class Roster extends KeyableMap<Student> {
         super(key, map);
     }
 
+    Roster(KeyableMap<Student> keyMap) {
+        super(keyMap);
+    }
+
     Roster put(Student stu) {
         KeyableMap<Student> keyMap = super.put(stu);
-        return new Roster(keyMap.getKey(), keyMap.getMap());
+        return new Roster(keyMap);
     }
 
     void update(String stuId, String modId, String assId, String grade) {
         if (!this.contains(stuId)) {
             this.put(new Student(stuId).put(new Module(modId).put(new Assessment(assId, grade))));
             return;
-        } else if (!this.get(stuId).contains(modId)) {
-            this.get(stuId).put(new Module(modId).put(new Assessment(assId, grade)));
+        } else if (!this.get(stuId).map(x -> x.contains(modId)).orElse(false)) {
+            this.get(stuId).map(x -> x.put(new Module(modId).put(new Assessment(assId, grade))));
             return;
         } 
-        this.get(stuId).get(modId).put(new Assessment(assId, grade));
+        this.get(stuId).flatMap(x -> x.get(modId)).map(x -> x.put(new Assessment(assId, grade)));
     }
 
     String getGrade(String stuId, String modId, String assId) {
         String notFound = String.format("No such record: %s %s %s", stuId, modId, assId);
-        if (this.get(stuId) instanceof Object && this.get(stuId).get(modId) instanceof Object &&
-                this.get(stuId).get(modId).get(assId) instanceof Object) {
-            return this.get(stuId).get(modId).get(assId).getGrade();
-        }
-        return notFound;
+        return this.get(stuId).flatMap(x -> x.get(modId)).flatMap(x -> x.get(assId))
+        .map(x -> x.getGrade()).orElse(notFound);
     }
 }
