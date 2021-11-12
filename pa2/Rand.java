@@ -37,12 +37,12 @@ class Rand<R> {
         return "Rand";
     }
 
-    <U> Rand<U> map(Function<Integer, U> mapper) {
-        return new Rand<U>(seed, mapper);
+    <U> Rand<U> map(Function<R, U> mapper) {
+        return new Rand<U>(seed, x -> mapper.apply(this.mapper.apply(x)));
     }
 
-    <U> Rand<U> flatMap(Function<Integer, Rand<U>> mapper) {
-        return this.map(x -> mapper.apply(this.mapper.apply(x)).get());            
+    <U> Rand<U> flatMap(Function<R, Rand<U>> mapper) {
+        return this.map(y -> mapper.apply(y).get());            
     } 
 
 }
