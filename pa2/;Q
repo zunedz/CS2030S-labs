@@ -1,0 +1,5 @@
+class Main {
+    static simulate(int seed, int n) {
+        
+    }
+}
