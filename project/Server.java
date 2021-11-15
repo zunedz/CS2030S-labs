@@ -62,4 +62,8 @@ class Server {
     int getMaxSize() {
         return maxSize;
     }
+
+    int getQueSize() {
+        return this.q.size();
+    }
 }
