@@ -26,5 +26,9 @@ abstract class Event {
         return customer.getId();
     }
     
+    double getWaitingTime() {
+        return this.time - this.customer.getTime();
+    }
+    
     abstract Event nextEvent(double time, Customer customer, String next, int serverId);
 }

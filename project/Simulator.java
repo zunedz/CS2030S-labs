@@ -14,10 +14,12 @@ public class Simulator {
     private final List<Double> servingTimes;
     private final RandomGenerator rand;
     private final double rhoRest;
+    private final int n;
 
     public Simulator(int numOfServers, List<Double> arrivalTimes) {
         this.numOfServers = numOfServers;
         this.numOfAutoServers = 0;
+        this.n = arrivalTimes.size();
         this.serverList = new ArrayList<Server>();
         this.servingTimes = new ArrayList<Double>();
         this.restTimes = new LinkedList<Double>();
@@ -38,6 +40,7 @@ public class Simulator {
     public Simulator(int numOfServers, List<Double> arrivalTimes, List<Double> servingTimes, int maxQueLength) {
         this.numOfServers = numOfServers;
         this.numOfAutoServers = 0;
+        this.n = arrivalTimes.size();
         this.serverList = new ArrayList<Server>();
         this.restTimes = new LinkedList<Double>();
         this.servingTimes = servingTimes;
@@ -57,6 +60,7 @@ public class Simulator {
     public Simulator(int numOfServers, List<Double> arrivalTimes, List<Double> servingTimes, int maxQueLength, LinkedList<Double> restTimes) {
         this.numOfServers = numOfServers;
         this.numOfAutoServers = 0;
+        this.n = arrivalTimes.size();
         this.serverList = new ArrayList<Server>();
         this.restTimes = restTimes;
         this.servingTimes = servingTimes;
@@ -75,6 +79,7 @@ public class Simulator {
     public Simulator(int numOfServers, int numOfAutoServers, List<Double> arrivalTimes, List<Double> servingTimes, int maxQueLength, LinkedList<Double> restTimes) {
         this.numOfServers = numOfServers;
         this.numOfAutoServers = numOfAutoServers;
+        this.n = arrivalTimes.size();
         this.serverList = new ArrayList<Server>();
         this.restTimes = restTimes;
         this.servingTimes = servingTimes;
@@ -97,6 +102,7 @@ public class Simulator {
         this.rand = new RandomGenerator(seed, lambda, mu, rho);
         this.numOfServers = numOfServers;
         this.numOfAutoServers = numOfAutoServers;
+        this.n = N;
         this.serverList = new ArrayList<Server>();
         this.restTimes = new LinkedList<Double>();
         this.servingTimes = new ArrayList<Double>();
@@ -131,6 +137,8 @@ public class Simulator {
     }
 
     public void simulate() {
+        int served = 0;
+        double totalWait = 0;
         while (!pq.isEmpty()) {
             Event current = pq.poll();
             if (current instanceof Rest) {
@@ -146,6 +154,8 @@ public class Simulator {
                 }
             } else if (current instanceof Serve) {
                 Serve newEvent = (Serve) current;
+                served += 1;
+                totalWait += current.getWaitingTime();
                 handleServe(newEvent);
             } else if (current instanceof Wait) {
                 Wait newEvent = (Wait) current;
@@ -156,6 +166,8 @@ public class Simulator {
             }  
             System.out.println(current);
         } 
+        double average = totalWait / served;
+        System.out.println(String.format("[%.3f %d %d]", average, served, n - served));
     }
 
     void handleArrive(Arrive current) {
