@@ -14,8 +14,8 @@ class Done extends Event {
     }
 
     @Override
-    Event nextEvent(double time, Customer customer, String next, int serverId) {
-        return this;
+    Rest nextEvent(double time, Customer customer, String next, int serverId) {
+        return new Rest(time, serverId);
     }
 
     int getServerId() {
