@@ -190,26 +190,26 @@ public class Simulator {
         double totalWait = 0;
         while (!pq.isEmpty()) {
             Event current = pq.poll();
-            if (current instanceof Rest) {
+            if (current.getType().equals("Rest")) {
                 Rest newEvent = (Rest) current;
                 handleRest(newEvent);
                 continue;
-            } else if (current instanceof Arrive) {
+            } else if (current.getType().equals("Arrive")) {
                 Arrive newEvent = (Arrive) current;
                 if (current.getCustomer().isGreedy()) {
                     handleGreedyArrive(newEvent);
                 } else {
                     handleArrive(newEvent);
                 }
-            } else if (current instanceof Serve) {
+            } else if (current.getType().equals("Serve")) {
                 Serve newEvent = (Serve) current;
                 served += 1;
                 totalWait += current.getWaitingTime();
                 handleServe(newEvent);
-            } else if (current instanceof Wait) {
+            } else if (current.getType().equals("Wait")) {
                 Wait newEvent = (Wait) current;
                 handleWait(newEvent);
-            } else if (current instanceof Done) {
+            } else if (current.getType().equals("Done")) {
                 Done newEvent = (Done) current;
                 handleDone(newEvent);
             }  
@@ -226,7 +226,7 @@ public class Simulator {
             Server server = serverList.get(i);
             int id = server.getServerId();
             if (server.canServe(current)) {        
-                pq.add(current.nextEvent(time, cust, "serve", id));
+                pq.add(current.nextEvent(time, cust, "serve", id, id > numOfServers));
                 return;
             } 
         }
@@ -235,11 +235,11 @@ public class Simulator {
             int id = server.getServerId();
             if (server.canWait(current)) {
                 //check if autoserver
-                pq.add(current.nextEvent(time, cust, "wait", id));
+                pq.add(current.nextEvent(time, cust, "wait", id, id > numOfServers));
                 return;
             } 
         }
-        pq.add(current.nextEvent(time,  cust, "leave", -1));
+        pq.add(current.nextEvent(time,  cust, "leave", -1, false));
     }
 
     void handleGreedyArrive(Arrive current) {
@@ -249,7 +249,7 @@ public class Simulator {
             Server server = serverList.get(i);
             int id = server.getServerId();
             if (server.canServe(current)) {        
-                pq.add(current.nextEvent(time, cust, "serve", id));
+                pq.add(current.nextEvent(time, cust, "serve", id, id > numOfServers));
                 return;
             } 
         }
@@ -269,10 +269,11 @@ public class Simulator {
         }
         if (canQueue) {
             Server server = serverList.get(indexServer);
-            pq.add(current.nextEvent(time, cust, "wait", server.getServerId()));
+            int id = server.getServerId();
+            pq.add(current.nextEvent(time, cust, "wait", id, id > numOfServers));
             return;
         }
-        pq.add(current.nextEvent(time, cust, "leave", -1));
+        pq.add(current.nextEvent(time, cust, "leave", -1, false));
     }
 
     void handleServe(Serve current) {
@@ -280,7 +281,8 @@ public class Simulator {
         double time = current.getTime();
         Customer cust = current.getCustomer();
         int serverId = current.getServerId();
-        Done done = current.nextEvent(time + cust.getServeTime(), cust, "done", serverId);
+        Done done = current.nextEvent(time + cust.getServeTime(), cust, 
+            "done", serverId, serverId > numOfServers);
         serverList.get(serverId - 1).serveEvent(done);
         pq.add(done);
     }
@@ -304,16 +306,16 @@ public class Simulator {
         Rest rest;
         Done done;
         if (serverId > numOfServers) {
-            rest = current.nextEvent(time, cust, "rest", serverId);
+            rest = current.nextEvent(time, cust, "rest", serverId, true);
             done = new Done(time, cust, serverId);
         } else {
             double temp = rand.genRandomRest();
             if (temp < this.rhoRest) {
                 double restTime = restTimes.poll();
-                rest = current.nextEvent(time + restTime, cust, "rest", serverId);
+                rest = current.nextEvent(time + restTime, cust, "rest", serverId, false);
                 done = new Done(time + restTime, cust, serverId);
             } else {
-                rest = current.nextEvent(time, cust, "rest", serverId);
+                rest = current.nextEvent(time, cust, "rest", serverId, false);
                 done = new Done(time, cust, serverId);
             }
         }

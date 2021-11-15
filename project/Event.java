@@ -30,5 +30,8 @@ abstract class Event {
         return this.time - this.customer.getTime();
     }
     
-    abstract Event nextEvent(double time, Customer customer, String next, int serverId);
+    abstract String getType();
+    
+    abstract Event nextEvent(double time, Customer customer, 
+        String next, int serverId, boolean isSelf);
 }

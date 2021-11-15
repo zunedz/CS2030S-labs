@@ -6,11 +6,16 @@ class Leave extends Event {
     }
 
     @Override
+    String getType() {
+        return "Leave";
+    }
+    
+    @Override
     public String toString() {
         return super.toString() + "leaves";
     } 
 
-    Event nextEvent(double time, Customer customer, String next, int serverId)  {
+    Event nextEvent(double time, Customer customer, String next, int serverId, boolean isSelf)  {
         return this;
     }
 }

@@ -21,12 +21,17 @@ class AutoServer extends Server {
     }
 
     @Override
+    int getQueSize() {
+        return this.sharedQ.size();
+    }
+
+    @Override
     void dequeEvent(PriorityQueue<Event> pq) {
         if (!sharedQ.isEmpty()) {
             Done oldEvent = getEvent();
             Wait temp = sharedQ.poll();
             Serve newEvent = temp.nextEvent(oldEvent.getTime(), 
-                temp.getCustomer(), "serve", getServerId());
+                temp.getCustomer(), "serve", getServerId(), true);
             pq.add(newEvent);
         }
     }

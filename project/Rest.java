@@ -14,10 +14,15 @@ class Rest extends Event {
     }
 
     @Override
-    Rest nextEvent(double time, Customer customer, String next, int serverId) {
+    Rest nextEvent(double time, Customer customer, String next, int serverId, boolean isSelf) {
         return this;
     }
 
+    @Override
+    String getType() {
+        return "Rest";
+    }
+    
     int getServerId() {
         return this.serverId;
     }
