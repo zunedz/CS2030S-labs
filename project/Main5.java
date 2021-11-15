@@ -11,13 +11,14 @@ class Main5 {
         int numOfServers = sc.nextInt();
         int numOfAutoServers = sc.nextInt();
         int maxQueLength = sc.nextInt();
-        int N = sc.nextInt();
+        int n = sc.nextInt();
         double lambda = sc.nextDouble();
         double mu = sc.nextDouble();
         double rho = sc.nextDouble();
         double rhoRest = sc.nextDouble();
         double rhoGreedy = sc.nextDouble();
-        Simulator s = new Simulator(seed, numOfServers, numOfAutoServers, maxQueLength, N, lambda, mu, rho, rhoRest, rhoGreedy);
+        Simulator s = new Simulator(seed, numOfServers, numOfAutoServers, 
+            maxQueLength, n, lambda, mu, rho, rhoRest, rhoGreedy);
         s.simulate();
     }
 }

@@ -16,6 +16,11 @@ public class Simulator {
     private final double rhoRest;
     private final int n;
 
+    /**
+     * Simulator constructor for level1.
+     * @param numOfServers - total number of human servers
+     * @param arrivalTimes - list of customers' arrival times
+     */
     public Simulator(int numOfServers, List<Double> arrivalTimes) {
         this.numOfServers = numOfServers;
         this.numOfAutoServers = 0;
@@ -37,7 +42,15 @@ public class Simulator {
         this.rand = new RandomGenerator(0, 0, 0, 0);
     }
 
-    public Simulator(int numOfServers, List<Double> arrivalTimes, List<Double> servingTimes, int maxQueLength) {
+    /** 
+     * Simulator constructor for level2.
+     * @param numOfServers - total number of human servers
+     * @param arrivalTimes - list of customers' arrival times
+     * @param servingTimes - list of customers' serving times
+     * @param maxQueLength - maximum number of person queueing
+     */
+    public Simulator(int numOfServers, List<Double> arrivalTimes, 
+        List<Double> servingTimes, int maxQueLength) {
         this.numOfServers = numOfServers;
         this.numOfAutoServers = 0;
         this.n = arrivalTimes.size();
@@ -57,7 +70,16 @@ public class Simulator {
         this.rand = new RandomGenerator(0, 0, 0, 0);
     }
 
-    public Simulator(int numOfServers, List<Double> arrivalTimes, List<Double> servingTimes, int maxQueLength, LinkedList<Double> restTimes) {
+    /**
+     * Simulator constructor for level3.
+     * @param numOfServers - total number of human servers
+     * @param arrivalTimes - list of customers' arrival times
+     * @param servingTimes - list of customers' serving times
+     * @param maxQueLength - maximum number of person queueing
+     * @param restTimes - Queue of resting times for server
+     */
+    public Simulator(int numOfServers, List<Double> arrivalTimes, 
+        List<Double> servingTimes, int maxQueLength, LinkedList<Double> restTimes) {
         this.numOfServers = numOfServers;
         this.numOfAutoServers = 0;
         this.n = arrivalTimes.size();
@@ -76,7 +98,17 @@ public class Simulator {
         this.rand = new RandomGenerator(0, 0, 0, 0);
     }
 
-    public Simulator(int numOfServers, int numOfAutoServers, List<Double> arrivalTimes, List<Double> servingTimes, int maxQueLength, LinkedList<Double> restTimes) {
+    /**
+     * Simulator constructor for level4.
+     * @param numOfServers - total number of human servers
+     * @param numOfAutoServers - total number of  self-checkout counter
+     * @param arrivalTimes - list of customers' arrival times
+     * @param servingTimes - list of customers' serving times
+     * @param maxQueLength - maximum number of person queueing
+     * @param restTimes - Queue of resting times for server
+     */
+    public Simulator(int numOfServers, int numOfAutoServers, List<Double> arrivalTimes, 
+        List<Double> servingTimes, int maxQueLength, LinkedList<Double> restTimes) {
         this.numOfServers = numOfServers;
         this.numOfAutoServers = numOfAutoServers;
         this.n = arrivalTimes.size();
@@ -98,31 +130,45 @@ public class Simulator {
         this.rand = new RandomGenerator(0, 0, 0, 0);
     }
 
-    public Simulator(int seed, int numOfServers, int numOfAutoServers, int maxQueLength, int N, double lambda, double mu, double rho, double rhoRest, double rhoGreedy) {
+    /**
+     * Simulator constructor for level5.
+     * @param seed - seed for RandomGenerator
+     * @param numOfServers - total number  of human servers
+     * @param numOfAutoServers - total number of  self-checkout counter
+     * @param maxQueLength - maximum number of person queueing
+     * @param n - total number of customers
+     * @param lambda  - arrival rate
+     * @param mu - service rate
+     * @param rho - server resting rate
+     * @param rhoRest - probability of  resting
+     * @param rhoGreedy - probability of greedy customer
+     */
+    public Simulator(int seed, int numOfServers, int numOfAutoServers, int maxQueLength, 
+        int n, double lambda, double mu, double rho, double rhoRest, double rhoGreedy) {
         this.rand = new RandomGenerator(seed, lambda, mu, rho);
         this.numOfServers = numOfServers;
         this.numOfAutoServers = numOfAutoServers;
-        this.n = N;
+        this.n = n;
         this.serverList = new ArrayList<Server>();
         this.restTimes = new LinkedList<Double>();
         this.servingTimes = new ArrayList<Double>();
         this.rhoRest = rhoRest;
         double now = 0.0;
-        for (int i = 0; i < N; i++) {//init rest times
+        for (int i = 0; i < n; i++) { //init rest times
             double temp = this.rand.genRestPeriod();
             restTimes.add(temp);
         }
-        for (int i = 0; i < N; i++) {//init serving times
+        for (int i = 0; i < n; i++) { //init serving times
             double temp = this.rand.genServiceTime();
             servingTimes.add(temp);
         }
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < n; i++) {
             double temp = rand.genCustomerType();
             Customer customer;
             if (temp < rhoGreedy) {
-                 customer = new GreedyCustomer(i + 1, now, () -> servingTimes.remove(0));
+                customer = new GreedyCustomer(i + 1, now, () -> servingTimes.remove(0));
             } else {
-                 customer = new Customer(i + 1, now, () -> servingTimes.remove(0));
+                customer = new Customer(i + 1, now, () -> servingTimes.remove(0));
             }
             Event newEvent = new Arrive(customer.getTime(), customer);
             pq.add(newEvent);
@@ -136,6 +182,9 @@ public class Simulator {
         }
     }
 
+    /**
+     * Simulate the Simulator.
+     */
     public void simulate() {
         int served = 0;
         double totalWait = 0;

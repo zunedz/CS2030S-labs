@@ -54,7 +54,8 @@ class Server {
         if (!q.isEmpty()) {
             Done oldEvent = event.get(0);
             Wait temp = q.poll();
-            Serve newEvent = temp.nextEvent(oldEvent.getTime(), temp.getCustomer(), "serve", getServerId());
+            Serve newEvent = temp.nextEvent(oldEvent.getTime(), 
+                temp.getCustomer(), "serve", getServerId());
             pq.add(newEvent);
         }
     }

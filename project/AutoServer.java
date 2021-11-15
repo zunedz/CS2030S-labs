@@ -25,7 +25,8 @@ class AutoServer extends Server {
         if (!sharedQ.isEmpty()) {
             Done oldEvent = getEvent();
             Wait temp = sharedQ.poll();
-            Serve newEvent = temp.nextEvent(oldEvent.getTime(), temp.getCustomer(), "serve", getServerId());
+            Serve newEvent = temp.nextEvent(oldEvent.getTime(), 
+                temp.getCustomer(), "serve", getServerId());
             pq.add(newEvent);
         }
     }

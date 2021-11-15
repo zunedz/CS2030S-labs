@@ -2,6 +2,7 @@ package cs2030.simulator;
 
 class Serve extends Event {
     private final int serverId;
+    
     Serve(double time, Customer customer, int serverId) {
         super(time, customer);
         this.serverId = serverId;

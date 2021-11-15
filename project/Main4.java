@@ -13,18 +13,19 @@ class Main4 {
         int numOfServers = sc.nextInt();
         int numOfAutoServers = sc.nextInt();
         int maxQueLength = sc.nextInt();
-        int N = sc.nextInt();
-        for (int i = 0; i < N; i++) {
+        int n = sc.nextInt();
+        for (int i = 0; i < n; i++) {
             double time = sc.nextDouble();
             double serveTime = sc.nextDouble();
             arrivalTimes.add(time);
             servingTimes.add(serveTime);
         }
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < n; i++) {
             double restTime = sc.nextDouble();
             restTimes.add(restTime);
         }
-        Simulator s = new Simulator(numOfServers, numOfAutoServers, arrivalTimes, servingTimes, maxQueLength, restTimes);
+        Simulator s = new Simulator(numOfServers, numOfAutoServers, 
+            arrivalTimes, servingTimes, maxQueLength, restTimes);
         s.simulate();
     }
 }
