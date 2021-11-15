@@ -34,6 +34,10 @@ class Server {
         return this.event.get(0).getTime();
     }
 
+    Done getEvent() {
+        return event.get(0);
+    }
+
     void serveEvent(Done other) {
         if (event.isEmpty()) {
             this.event.add(other);
@@ -53,5 +57,9 @@ class Server {
             Serve newEvent = temp.nextEvent(oldEvent.getTime(), temp.getCustomer(), "serve", getServerId());
             pq.add(newEvent);
         }
+    }
+
+    int getMaxSize() {
+        return maxSize;
     }
 }

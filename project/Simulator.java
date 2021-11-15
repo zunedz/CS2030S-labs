@@ -9,10 +9,12 @@ public class Simulator {
     private final PriorityQueue<Event> pq = new PriorityQueue<Event>(new EventComparator());
     private final List<Server> serverList;
     private final int numOfServers;
+    private final int numOfAutoServers;
     private final LinkedList<Double> restTimes;
 
     public Simulator(int numOfServers, List<Double> arrivalTimes) {
         this.numOfServers = numOfServers;
+        this.numOfAutoServers = 0;
         this.serverList = new ArrayList<Server>();
         this.restTimes = new LinkedList<Double>();
         for (int i = 0; i < arrivalTimes.size(); i++) {
@@ -29,6 +31,7 @@ public class Simulator {
 
     public Simulator(int numOfServers, List<Double> arrivalTimes, List<Double> servingTimes, int maxQueLength) {
         this.numOfServers = numOfServers;
+        this.numOfAutoServers = 0;
         this.serverList = new ArrayList<Server>();
         this.restTimes = new LinkedList<Double>();
         for (int i = 0; i < arrivalTimes.size(); i++) {
@@ -44,6 +47,7 @@ public class Simulator {
 
     public Simulator(int numOfServers, List<Double> arrivalTimes, List<Double> servingTimes, int maxQueLength, LinkedList<Double> restTimes) {
         this.numOfServers = numOfServers;
+        this.numOfAutoServers = 0;
         this.serverList = new ArrayList<Server>();
         this.restTimes = restTimes;
         for (int i = 0; i < arrivalTimes.size(); i++) {
@@ -54,6 +58,25 @@ public class Simulator {
         for (int i = 0; i < numOfServers; i++)  {
             serverList.add(new Server(i + 1, maxQueLength));
         }
+    }
+
+    public Simulator(int numOfServers, int numOfAutoServers, List<Double> arrivalTimes, List<Double> servingTimes, int maxQueLength, LinkedList<Double> restTimes) {
+        this.numOfServers = numOfServers;
+        this.numOfAutoServers = numOfAutoServers;
+        this.serverList = new ArrayList<Server>();
+        this.restTimes = restTimes;
+        for (int i = 0; i < arrivalTimes.size(); i++) {
+            Customer customer = new Customer(i + 1, arrivalTimes.get(i), servingTimes.get(i));
+            Event newEvent = new Arrive(customer.getTime(), customer);
+            pq.add(newEvent);
+        }
+        for (int i = 0; i < numOfServers; i++)  {
+            serverList.add(new Server(i + 1, maxQueLength));
+        }
+        for (int i = numOfServers; i < numOfServers + numOfAutoServers; i++)  {
+            serverList.add(new AutoServer(i + 1, maxQueLength));
+        }
+
     }
 
     public void simulate() {
@@ -83,7 +106,7 @@ public class Simulator {
     void handleArrive(Arrive current) {
         double time = current.getTime();
         Customer cust = current.getCustomer();
-        for (int i = 0; i < numOfServers; i++) {
+        for (int i = 0; i < numOfServers + numOfAutoServers; i++) {
             Server server = serverList.get(i);
             int id = server.getServerId();
             if (server.canServe(current)) {        
@@ -91,10 +114,11 @@ public class Simulator {
                 return;
             } 
         }
-        for (int i = 0; i < numOfServers; i++) {
+        for (int i = 0; i < numOfServers + numOfAutoServers; i++) {
             Server server = serverList.get(i);
             int id = server.getServerId();
             if (server.canWait(current)) {
+                //check if autoserver
                 pq.add(current.nextEvent(time, cust, "wait", id));
                 return;
             } 
@@ -126,10 +150,18 @@ public class Simulator {
         Customer cust = current.getCustomer();
         int serverId = current.getServerId();
         //handle rest time
-        double restTime = restTimes.poll();
-        Rest rest = current.nextEvent(time + restTime, cust, "rest", serverId);
-        Done done = new Done(time + restTime, cust, serverId);
+        //handle if server is auto
         Server server = serverList.get(serverId - 1);
+        Rest rest;
+        Done done;
+        if (serverId > numOfServers) {
+            rest = current.nextEvent(time, cust, "rest", serverId);
+            done = new Done(time, cust, serverId);
+        } else {
+            double restTime = restTimes.poll();
+            rest = current.nextEvent(time + restTime, cust, "rest", serverId);
+            done = new Done(time + restTime, cust, serverId);
+        }
         server.serveEvent(done);
         pq.add(rest);
     }
